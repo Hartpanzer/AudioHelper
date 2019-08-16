@@ -1,4 +1,10 @@
-import pyttsx3
-engine = pyttsx3.init()
-engine.say("Эщкере")
-engine.runAndWait()
+import speech_recognition as sr
+
+r = sr.Recognizer()
+with sr.Microphone(device_index = 12) as source:
+    print("Скажите что-нибудь...")
+    audio = r.listen(source)
+
+query = r.recognize_google(audio, language = "ru-RU")
+print("Вы сказали: " + query.lower())
+
