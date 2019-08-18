@@ -1,10 +1,13 @@
+import pyaudio
 import speech_recognition as sr
 
-r = sr.Recognizer()
-with sr.Microphone(device_index = 12) as source:
-    print("Скажите что-нибудь...")
-    audio = r.listen(source)
+r=sr.Recognizer()
+r.energy_threshold=4000
 
-query = r.recognize_google(audio, language = "ru-RU")
-print("Вы сказали: " + query.lower())
+with sr.Microphone() as source:
+   audio=r.listen(source)
 
+try:
+   print("Speech was:" + r.recognize_google(audio, language = "ru-RU"))
+except LookupError:
+   print('Speech not understood')
