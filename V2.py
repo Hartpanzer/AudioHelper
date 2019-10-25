@@ -1,13 +1,11 @@
 import os
 import time
-import speech_recognition as sr
 from fuzzywuzzy import fuzz
 import pyttsx3
 import datetime
 import speech_recognition as sr
 import sys
 import re
-import subprocess
 import webbrowser
 import smtplib
 import requests
@@ -90,6 +88,7 @@ def execute_cmd(cmd):
 
 
     speak_engine = pyttsx3.init()
+
     if cmd == 'ctime':
         # сказать текущее время
         now = datetime.datetime.now()
@@ -115,15 +114,17 @@ def execute_cmd(cmd):
         l = sr.Microphone(device_index=1)
         with l as source:
             k.adjust_for_ambient_noise(source)
-            speak("Просто назовите адрес: ")
+            speak("Просто скажите адрес или поисковый запрос: ")
             audio = k.listen(source)
         domain = k.recognize_google(audio, language="ru-RU").lower()
         print("[log] Распознано: " + domain)
         print(domain)
-        if re.search(r'\b.\b', domain):
-            webbrowser.open_new_tab('https://%s'%domain)
+        if re.search(r'\.', domain):
+            webbrowser.open_new_tab('https://'+domain)
+        elif re.search(r'\ ', domain):
+            webbrowser.open_new_tab('https://yandex.ru/search/?text='+domain)
         else:
-            webbrowser.open_new_tab('https://yandex.ru/search/?text=%s'%domain)
+            webbrowser.open_new_tab('https://yandex.ru/search/?text='+domain)
         speak('Сайт открывается...')
 
 
