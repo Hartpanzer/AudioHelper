@@ -13,8 +13,47 @@ root = Tk()
 root.title('Lora')
 root.geometry('400x700')
 root.resizable(False, False)
-canvas = Canvas(root, width='400', height='700', bg='#a0d6b4')
+
+def spravka():
+    spr = Tk()
+    spr.title('Справка')
+    spr.geometry('1000x500')
+    spr.resizable(False, False)
+    label_sp = Label(spr,text='Для начала выполнения любой команды нужно обратиться к Лоре.',font=('bold'))
+    label_sp.grid(column=0,row=0, sticky=W)
+    label_sp1 = Label(spr, text='Например: Лора; Привет, Лора; Здравствуй, Лора.')
+    label_sp1.grid(column=0, row=1, sticky=W)
+    label_sp2 = Label(spr,text='Узнать сколько время:',font=('bold'))
+    label_sp2.grid(column=0,row=2, sticky=W)
+    label_sp3 = Label(spr,text='Команды: текущее время; сколько сейчас времени; который час; время; сейчас время; кремлёвское время; часы.')
+    label_sp3.grid(column=0, row=3, sticky=W)
+    label_sp4 = Label(spr, text='Проиграть лучшую музыку на планете:', font=('bold'))
+    label_sp4.grid(column=0, row=4, sticky=W)
+    label_sp5 = Label(spr,text='Команды: похороны; король и шут; включи похороны панка.')
+    label_sp5.grid(column=0, row=5, sticky=W)
+    label_sp6 = Label(spr, text='Включить лучшее видео на планете:', font=('bold'))
+    label_sp6.grid(column=0, row=6, sticky=W)
+    label_sp7 = Label(spr, text='Команды: рикардо; рикардо милос; рикардо милоса; включи рикардо; включи рикардо милоса.')
+    label_sp7.grid(column=0, row=7, sticky=W)
+    label_sp8 = Label(spr, text='Работа с браузером', font=('bold'))
+    label_sp8.grid(column=0, row=8, sticky=W)
+    label_sp9 = Label(spr, text='Команды: открой браузер; сайт; открой сайт; нужен сайт; зайди на сайт; найди.')
+    label_sp9.grid(column=0, row=9, sticky=W)
+    label_sp10 = Label(spr, text='Примечание: После произнесения команды будет предоставлен выбор ввода адреса ссылки или поискового запроса.')
+    label_sp10.grid(column=0, row=10, sticky=W)
+    label_sp11 = Label(spr,text='Для выбора адресса ссылки скажите адрес И ОБЯЗАТЕЛЬНО СЛОВО ТОЧКА И ДОМЕН. Например, произнесите: ВК ТОЧКА КОМ и вы будете перенаправлены на vk.com')
+    label_sp11.grid(column=0, row=11, sticky=W)
+    label_sp12 = Label(spr,text='Для выбора поискового запроса скажите любое слово или словосочетание БЕЗ ТОЧКИ. Например, произнесите: купить автомобиль')
+    label_sp12.grid(column=0, row=12, sticky=W)
+    label_sp13 = Label(spr,text='Автор: Потапов Сергей', font=('bold'))
+    label_sp13.grid(column=0, row=13, sticky=S)
+    label_sp14 = Label(spr, text='Для обратной связи: hartpanzer@gmail.com', font=('bold'))
+    label_sp14.grid(column=0, row=14, sticky=S)
+
+#функция принимает значение из кнопки
+
 def Lora(vkl):
+
     while(vkl==True):
 
         # import requests
@@ -30,7 +69,7 @@ def Lora(vkl):
             "alias": ('лора', 'привет лора', 'здравствуй лора', 'лара', 'лаура'),
             "tbr": ('скажи', 'расскажи', 'покажи', 'сколько', 'произнеси'),
             "cmds": {
-                "ctime": ('текущее время', 'сейчас времени', 'который час', 'время', 'сейчас время', 'кремлёвское время'),
+                "ctime": ('текущее время', 'сейчас времени', 'который час', 'время', 'сейчас время', 'кремлёвское время', 'часы'),
                 "music": ('похороны', 'король и шут', 'включи похороны панка'),
                 "milos": ('рикардо', 'рикардо милос', 'рикардо милоса', 'включи рикардо', 'включи рикардо милоса'),
                 "stupid1": ('расскажи анекдот', 'рассмеши меня', 'ты знаешь анекдоты'),
@@ -134,11 +173,20 @@ def Lora(vkl):
         stop_listening = r.listen_in_background(m, callback)
 
         while True: time.sleep(0.1)  # infinity loop
-        label_n = Label(root, text='Ваш голосовой ассистент - Лора, запущен. Для начала работы обратитесь к ней, а потом скажите что ей выполнить')
+    if vkl == True:
+        label_n = Label(root, text='Ваш голосовой ассистент - Лора, запущен.')
         label_n.place(x=0, y=550)
-
+    else:
+        label_n = Label(root, text='Ожидание запуска...')
+        label_n.place(x=0, y=550)
+#кнопка запуска
 btn_zp = Button(root, text='Запустить', width=25,height=5)
 btn_zp.bind('<Button 1>', lambda event:Lora(vkl=True))
 btn_zp.place(x=100, y=600)
+
+#кнопка справки
+btn_help = Button(root, text='Справка', width=6,height=1,command=spravka)
+btn_help.pack()
+btn_help.place(x=0, y=0)
 
 root.mainloop()
