@@ -204,7 +204,7 @@ def Lora():
         elif cmd == "milos":
             # воспроизвести РИКАРДО
             vizov('Скажите название видео:')
-            os.path.abspath("LoraVideo\\"+namerec+".mp4")
+            os.startfile("LoraVideo\\"+namerec+".mp4")
 
         elif cmd == "web":
             vizov('Просто скажите адрес или поисковый запрос: ')
@@ -251,7 +251,7 @@ btn_help.place(x=0, y=0)
 #кнопка блокнта
 btn_bl = Button(root, text='Блокнот', width=6,height=1,command=notepad)
 btn_bl.pack()
-btn_bl.place(x=50, y=0)
+btn_bl.place(x=55, y=0)
 
 #кнопка завершения
 btn_st = Button(root, text='Завершить работу', width=15,height=1,command=stopLora)
