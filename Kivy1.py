@@ -1,192 +1,261 @@
 from tkinter import *
+from tkinter import filedialog as fd
+import tkinter as tk
 import os
 import time
 from fuzzywuzzy import fuzz
 import pyttsx3
 import datetime
 import speech_recognition as sr
+from tkinter import messagebox as mb
 import sys
 import re
 import webbrowser
+import random
 
 root = Tk()
 root.title('Lora')
 root.geometry('400x700')
 root.resizable(False, False)
 
+#Текстовый log
+global ltext
+ltext = Text(root, width=90, height=30, wrap=WORD)
+ltext.pack(side=LEFT, padx=5, pady=5)
+scrolly = Scrollbar(root, orient=VERTICAL, command=ltext.yview)
+scrolly.pack(side=RIGHT, fill=Y)
+ltext.config(state='normal',yscrollcommand=scrolly.set)
+ltext.insert(tk.INSERT,'Ожидание запуска...\n')
+ltext.config(state='disabled',yscrollcommand=scrolly.set)
+
 def spravka():
     spr = Tk()
     spr.title('Справка')
     spr.geometry('1000x500')
     spr.resizable(False, False)
-    label_sp = Label(spr,text='Для начала выполнения любой команды нужно обратиться к Лоре.',font=('bold'))
-    label_sp.grid(column=0,row=0, sticky=W)
-    label_sp1 = Label(spr, text='Например: Лора; Привет, Лора; Здравствуй, Лора.')
-    label_sp1.grid(column=0, row=1, sticky=W)
-    label_sp2 = Label(spr,text='Узнать сколько время:',font=('bold'))
-    label_sp2.grid(column=0,row=2, sticky=W)
-    label_sp3 = Label(spr,text='Команды: текущее время; сколько сейчас времени; который час; время; сейчас время; кремлёвское время; часы.')
-    label_sp3.grid(column=0, row=3, sticky=W)
-    label_sp4 = Label(spr, text='Проиграть лучшую музыку на планете:', font=('bold'))
-    label_sp4.grid(column=0, row=4, sticky=W)
-    label_sp5 = Label(spr,text='Команды: похороны; король и шут; включи похороны панка.')
-    label_sp5.grid(column=0, row=5, sticky=W)
-    label_sp6 = Label(spr, text='Включить лучшее видео на планете:', font=('bold'))
-    label_sp6.grid(column=0, row=6, sticky=W)
-    label_sp7 = Label(spr, text='Команды: рикардо; рикардо милос; рикардо милоса; включи рикардо; включи рикардо милоса.')
-    label_sp7.grid(column=0, row=7, sticky=W)
-    label_sp8 = Label(spr, text='Работа с браузером', font=('bold'))
-    label_sp8.grid(column=0, row=8, sticky=W)
-    label_sp9 = Label(spr, text='Команды: открой браузер; сайт; открой сайт; нужен сайт; зайди на сайт; найди.')
-    label_sp9.grid(column=0, row=9, sticky=W)
-    label_sp10 = Label(spr, text='Примечание: После произнесения команды будет предоставлен выбор ввода адреса ссылки или поискового запроса.')
-    label_sp10.grid(column=0, row=10, sticky=W)
-    label_sp11 = Label(spr,text='Для выбора адресса ссылки скажите адрес И ОБЯЗАТЕЛЬНО СЛОВО ТОЧКА И ДОМЕН. Например, произнесите: ВК ТОЧКА КОМ и вы будете перенаправлены на vk.com')
-    label_sp11.grid(column=0, row=11, sticky=W)
-    label_sp12 = Label(spr,text='Для выбора поискового запроса скажите любое слово или словосочетание БЕЗ ТОЧКИ. Например, произнесите: купить автомобиль')
-    label_sp12.grid(column=0, row=12, sticky=W)
-    label_sp13 = Label(spr,text='Автор: Потапов Сергей', font=('bold'))
-    label_sp13.grid(column=0, row=13, sticky=S)
-    label_sp14 = Label(spr, text='Для обратной связи: hartpanzer@gmail.com', font=('bold'))
-    label_sp14.grid(column=0, row=14, sticky=S)
+    text = Text(spr, width=120, height=30, wrap=WORD)
+    text.pack(side=LEFT, padx=5, pady=5)
+    scrolly = Scrollbar(spr, orient=VERTICAL, command=text.yview)
+    scrolly.pack(side=RIGHT, fill=Y)
+    text.insert(tk.INSERT,'Для начала выполнения любой команды нужно обратиться к Лоре.\n')
+    text.insert(tk.INSERT, 'Например: Лора; Привет, Лора; Здравствуй, Лора.\n')
+    text.insert(tk.INSERT, '________________________________________________________________________________________________________________________\n')
+    text.insert(tk.INSERT, '\nУзнать сколько время:\n')
+    text.insert(tk.INSERT, 'Команды: текущее время; сколько сейчас времени; который час; время; сейчас время; часы.\n')
+    text.insert(tk.INSERT, '________________________________________________________________________________________________________________________\n')
+    text.insert(tk.INSERT, '\nПроиграть лучшую музыку на планете:\n')
+    text.insert(tk.INSERT, 'Команды: включи музыку; музыка; похороны; король и шут; включи похороны панка.\n')
+    text.insert(tk.INSERT, '________________________________________________________________________________________________________________________\n')
+    text.insert(tk.INSERT, '\nПроиграть лучшую музыку на планете:\n')
+    text.insert(tk.INSERT, 'Команды: включи музыку; музыка; похороны; король и шут; включи похороны панка.\n')
+    text.insert(tk.INSERT, '________________________________________________________________________________________________________________________\n')
+    text.insert(tk.INSERT, '\nВключить лучшее видео на планете:\n')
+    text.insert(tk.INSERT, 'Команды: Включи видео, видео, рикардо; рикардо милос; рикардо милоса; включи рикардо; включи рикардо милоса.\n')
+    text.insert(tk.INSERT, '________________________________________________________________________________________________________________________\n')
+    text.insert(tk.INSERT, '\nРабота с браузером:\n')
+    text.insert(tk.INSERT, 'Команды: открой браузер; сайт; открой сайт; нужен сайт; зайди на сайт; найди.\n')
+    text.insert(tk.INSERT, '    Примечание: После произнесения команды будет предоставлен выбор ввода адреса ссылки или поискового запроса.\n')
+    text.insert(tk.INSERT, '    Для выбора адресса ссылки скажите адрес И ОБЯЗАТЕЛЬНО СЛОВО ТОЧКА И ДОМЕН. Например, произнесите: ВК ТОЧКА КОМ и вы будете перенаправлены на vk.com\n')
+    text.insert(tk.INSERT, '    Для выбора поискового запроса скажите любое слово или словосочетание БЕЗ ТОЧКИ. Например, произнесите: купить автомобиль\n')
+    text.insert(tk.INSERT, '________________________________________________________________________________________________________________________\n')
+    text.insert(tk.INSERT, '\n!ВРЕМЕННО НЕДОСТУПНО! Для открытия блокнота: !ВРЕМЕНО НЕДОСТУПНО!\n')
+    text.insert(tk.INSERT, 'Команды: открой блокнот; блокнот; открой записную книжку; открой запись; открой текст; открой текстовый редактор.\n')
+    text.insert(tk.INSERT, '________________________________________________________________________________________________________________________\n')
+    text.insert(tk.INSERT, '\nАвтор: Потапов Сергей\n')
+    text.insert(tk.INSERT, 'Для обратной связи: hartpanzer@gmail.com\n')
+
+    text.config(state='disabled',yscrollcommand=scrolly.set)
+
+def notepad():
+    def op():
+        file_name = fd.askopenfilename()
+        f = open(file_name)
+        s = f.read()
+        textn.insert(1.0, s)
+        f.close()
+
+    def sv():
+        file_name = fd.asksaveasfilename(filetypes=(("TXT files", "*.txt"),
+                                                    ("HTML files", "*.html;*.htm"),
+                                                    ("All files", "*.*")))
+
+        f = open(file_name, 'w')
+        s = textn.get(1.0, END)
+        f.write(s)
+        f.close()
+
+    notep = Tk()
+    notep.title('Блокнот')
+    fr1 = Frame(notep)
+    fr1.pack()
+    notep.geometry('1000x800')
+    notep.resizable(False, False)
+
+    b1 = Button(fr1, width=10, height=1, text='Открыть', command=op)
+    b1.pack(side=LEFT, padx=5, pady=5)
+
+    b2 = Button(fr1, width=10, height=1, text='Сохранить', command=sv)
+    b2.pack(side=LEFT, padx=5, pady=5)
+
+    textn = Text(notep,width=120, height=50, wrap=WORD)
+    textn.pack(side=LEFT, padx=5, pady=5)
+
+    scrolly = Scrollbar(notep,orient=VERTICAL, command=textn.yview)
+    scrolly.pack(side=RIGHT, fill=Y)
+
+    textn.config(yscrollcommand=scrolly.set)
+
+def stopLora():
+    os.abort()
 
 #функция принимает значение из кнопки
 
-def Lora(vkl):
+def Lora():
 
-    while(vkl==True):
+    #import requests
+    r = sr.Recognizer()
+    m = sr.Microphone(device_index=1)
 
-        # import requests
+    with m as source:
+        r.adjust_for_ambient_noise(source)
 
-        r = sr.Recognizer()
-        m = sr.Microphone(device_index=1)
-
-        with m as source:
-            r.adjust_for_ambient_noise(source)
-
-        # настройки
-        opts = {
-            "alias": ('лора', 'привет лора', 'здравствуй лора', 'лара', 'лаура'),
-            "tbr": ('скажи', 'расскажи', 'покажи', 'сколько', 'произнеси'),
-            "cmds": {
-                "ctime": ('текущее время', 'сейчас времени', 'который час', 'время', 'сейчас время', 'кремлёвское время', 'часы'),
-                "music": ('похороны', 'король и шут', 'включи похороны панка'),
-                "milos": ('рикардо', 'рикардо милос', 'рикардо милоса', 'включи рикардо', 'включи рикардо милоса'),
-                "stupid1": ('расскажи анекдот', 'рассмеши меня', 'ты знаешь анекдоты'),
-                "desk": ('открой программу', 'рабочий стол'),
-                "web": ('открой браузер', 'сайт', 'открой сайт', 'нужен сайт', 'зайди на сайт', 'найди')
+    # настройки
+    opts = {
+        "alias": ('лора', 'привет лора', 'здравствуй лора', 'лара', 'лаура', 'лорак'),
+        "tbr": ('скажи', 'расскажи', 'покажи', 'сколько', 'произнеси'),
+        "cmds": {
+            "ctime": ('текущее время', 'сейчас времени', 'который час', 'время', 'сейчас время', 'часы'),
+            "music": ('включи музыку', 'музыка', 'музыку'),
+            "milos": ('включи видео','видео', 'запусти видео'),
+            "anekdot": ('расскажи анекдот', 'рассмеши меня', 'ты знаешь анекдоты'),
+            "web": ('открой браузер', 'сайт', 'открой сайт', 'нужен сайт', 'зайди на сайт', 'найди'),
+            "stopLora":('спокойной ночи', 'пока', 'заверши работу', 'прощай', 'выключись', 'заверши работу', 'заверши свою работу', 'отдыхай'),
+            "notepad": ('открой блокнот', 'блокнот', 'открой записную книжку', 'открой запись', 'открой текст', 'открой текстовый редактор')
             }
         }
 
-        def callback(recognizer, audio):
-            try:
+    def callback(recognizer, audio):
+        try:
+            voices = recognizer.recognize_google(audio, language="ru-RU").lower()
+            print("[log] Распознано: " + voices)
 
-                voices = recognizer.recognize_google(audio, language="ru-RU").lower()
-                print("[log] Распознано: " + voices)
+            if voices.startswith(opts["alias"]):
+                # обращаются к Лоре
+                cmd = voices
 
-                if voices.startswith(opts["alias"]):
-                    # обращаются к Лоре
-                    cmd = voices
+                for x in opts['alias']:
+                    cmd = cmd.replace(x, "").strip()
 
-                    for x in opts['alias']:
-                        cmd = cmd.replace(x, "").strip()
+                for x in opts['tbr']:
+                    cmd = cmd.replace(x, "").strip()
 
-                    for x in opts['tbr']:
-                        cmd = cmd.replace(x, "").strip()
+                # распознаем и выполняем команду
+                cmd = recognize_cmd(cmd)
+                execute_cmd(cmd['cmd'])
 
-                    # распознаем и выполняем команду
-                    cmd = recognize_cmd(cmd)
-                    execute_cmd(cmd['cmd'])
+        except sr.UnknownValueError:
+            print("[log] Голос не распознан!")
+        except sr.RequestError as e:
+            print("[log] Неизвестная ошибка, проверьте интернет!")
 
-            except sr.UnknownValueError:
-                print("[log] Голос не распознан!")
-            except sr.RequestError as e:
-                print("[log] Неизвестная ошибка, проверьте интернет!")
+    def recognize_cmd(cmd):
+        RC = {'cmd': '', 'percent': 0}
+        for c, v in opts['cmds'].items():
 
-        def recognize_cmd(cmd):
-            RC = {'cmd': '', 'percent': 0}
-            for c, v in opts['cmds'].items():
+            for x in v:
+                vrt = fuzz.ratio(cmd, x)
+                if vrt > RC['percent']:
+                    RC['cmd'] = c
+                    RC['percent'] = vrt
 
-                for x in v:
-                    vrt = fuzz.ratio(cmd, x)
-                    if vrt > RC['percent']:
-                        RC['cmd'] = c
-                        RC['percent'] = vrt
+        return RC
 
-            return RC
+    def execute_cmd(cmd):
+        def speak(wait):
+            print(wait)
+            speak_engine.say(wait)
+            speak_engine.runAndWait()
+            speak_engine.stop()
 
-        def execute_cmd(cmd):
-            def speak(wait):
-                print(wait)
-                speak_engine.say(wait)
-                speak_engine.runAndWait()
-                speak_engine.stop()
+        speak_engine = pyttsx3.init()
 
-            speak_engine = pyttsx3.init()
-
-            if cmd == 'ctime':
-                # сказать текущее время
-                now = datetime.datetime.now()
-                speak("Сейчас " + str(now.hour) + ":" + str(now.minute))
-
-            elif cmd == 'music':
-                # воспроизвести музыку
-                link = os.path.abspath("Music\PohoroniPanka.mp3")
-                os.system(link)
-
-            elif cmd == "milos":
-                # воспроизвести РИКАРДО
-                link = os.path.abspath("Video\Halogen.mp4")
-                os.system(link)
-
-            # elif cmd == 'desk':
-            # открыть с рабочего стола
-            # link = os.path.abspath("Desktop\Для курсача.txt")
-            # print(link)
-
-            elif cmd == "web":
-                k = sr.Recognizer()
-                l = sr.Microphone(device_index=1)
-                with l as source:
-                    k.adjust_for_ambient_noise(source)
-                    speak("Просто скажите адрес или поисковый запрос: ")
-                    audio = k.listen(source)
-                domain = k.recognize_google(audio, language="ru-RU").lower()
-                print("[log] Распознано: " + domain)
-                print(domain)
-                if re.search(r'\.', domain):
-                    webbrowser.open_new_tab('https://' + domain)
-                elif re.search(r'\ ', domain):
-                    webbrowser.open_new_tab('https://yandex.ru/search/?text=' + domain)
-                else:
-                    webbrowser.open_new_tab('https://yandex.ru/search/?text=' + domain)
-                speak('Сайт открывается...')
+        def vizov(sp):
+            k = sr.Recognizer()
+            l = sr.Microphone(device_index=1)
+            with l as source:
+                k.adjust_for_ambient_noise(source)
+                speak(sp)
+                audio = k.listen(source)
+            global namerec
+            namerec = k.recognize_google(audio, language="ru-RU").lower()
+            print("[log] Распознано: " + namerec)
 
 
-            elif cmd == 'stupid1':
-                # рассказать анекдот
-                speak("Мой разработчик не научил меня анекдотам ... Ха ха ха")
+        if cmd == 'ctime':
+            # сказать текущее время
+            now = datetime.datetime.now()
+            speak("Сейчас " + str(now.hour) + ":" + str(now.minute))
 
+        elif cmd == 'music':
+            # воспроизвести музыку
+            vizov('Скажите название композиции:')
+            os.startfile("LoraMusic\\"+namerec+".mp3")
+
+        elif cmd == "milos":
+            # воспроизвести РИКАРДО
+            vizov('Скажите название видео:')
+            os.path.abspath("LoraVideo\\"+namerec+".mp4")
+
+        elif cmd == "web":
+            vizov('Просто скажите адрес или поисковый запрос: ')
+            if re.search(r'\.', namerec):
+                webbrowser.open_new_tab('https://' + namerec)
+            elif re.search(r'\ ', namerec):
+                webbrowser.open_new_tab('https://yandex.ru/search/?text=' + namerec)
             else:
-                print('Команда не распознана, повторите!')
+                webbrowser.open_new_tab('https://yandex.ru/search/?text=' + namerec)
+            speak('Сайт открывается...')
 
-        stop_listening = r.listen_in_background(m, callback)
 
-        while True: time.sleep(0.1)  # infinity loop
-    if vkl == True:
-        label_n = Label(root, text='Ваш голосовой ассистент - Лора, запущен.')
-        label_n.place(x=0, y=550)
-    else:
-        label_n = Label(root, text='Ожидание запуска...')
-        label_n.place(x=0, y=550)
+        elif cmd == 'anekdot':
+            # рассказать анекдот
+            an_list = ["И поехала она за ним в Сибирь. И испортила ему всю каторгу...",
+                        "Лучшее средство от любви с первого взгляда - посмотреть второй раз.",
+                        "Бесит, когда разговор с тобой начинают не с поклона.",
+                        "— Интересно, какой изврат психики заставляет меня говорить голосовому помощнику \"спасибо\" и \"пожалуйста\"? Она же не настоящая!\n— Правильно делаешь. Когда Скайнет придет к власти, тебе, может, и зачтется…"]
+            speak(random.choice(an_list))
+
+        #elif cmd == 'notepad':
+            #btn_bl.click
+        elif cmd == 'stopLora':
+            st_list = ["До встречи!", "Спасибо за работу!", "Удачи!", "До свидания!", "Вы лучший"]
+            speak(random.choice(st_list))
+            os.abort()
+        else:
+            print('Команда не распознана, повторите!')
+
+    stop_listening = r.listen_in_background(m, callback)
+
+    while True: time.sleep(0.1)  # infinity loop
+
 #кнопка запуска
-btn_zp = Button(root, text='Запустить', width=25,height=5)
-btn_zp.bind('<Button 1>', lambda event:Lora(vkl=True))
+btn_zp = Button(root, text='Запустить', width=25,height=5,command=Lora)
+btn_zp.pack()
 btn_zp.place(x=100, y=600)
 
 #кнопка справки
 btn_help = Button(root, text='Справка', width=6,height=1,command=spravka)
 btn_help.pack()
 btn_help.place(x=0, y=0)
+
+#кнопка блокнта
+btn_bl = Button(root, text='Блокнот', width=6,height=1,command=notepad)
+btn_bl.pack()
+btn_bl.place(x=50, y=0)
+
+#кнопка завершения
+btn_st = Button(root, text='Завершить работу', width=15,height=1,command=stopLora)
+btn_st.pack()
+btn_st.place(x=250, y=0)
 
 root.mainloop()
